@@ -43,16 +43,14 @@ Ask the user or infer:
 
 ### Decision Tree
 
-```
-Is it matrix multiplication (GEMM)?
-├── YES → Use Tensor Core (WMMA) if FP16/BF16
-│   ├── M,N > 512 → Use Tiled GEMM with SMEM
-│   └── Small M,N → Warp-level MMA
-├── NO
-    ├── Is it reduction? → Warp shuffle + block reduce
-    ├── Is it element-wise? → Naive kernel + fuse
-    └── Is it custom? → Use CuTe / CUTLASS
-```
+| Condition | Use |
+|-----------|-----|
+| GEMM + FP16/BF16 | Tensor Core (WMMA) |
+| M,N > 512 | Tiled GEMM with SMEM |
+| Small M,N | Warp-level MMA |
+| Reduction | Warp shuffle + block reduce |
+| Element-wise | Naive kernel + fuse |
+| Custom op | Use CuTe / CUTLASS |
 
 ---
 
@@ -236,18 +234,14 @@ nvcc -Xptxas -v -arch=sm_90 kernel.cu
 
 ## Quick Reference
 
-```
-┌─────────────────────────────────────────────┐
-│           Decision Cheat Sheet              │
-├─────────────────────────────────────────────┤
-│ GEMM + FP16 → wmma_gemm template           │
-│ GEMM + FP32 → tiled_gemm template          │
-│ Element-wise → element_wise template        │
-│ Reduce/Sum → warp_reduce_sum + kernel      │
-│ Custom op → Use CUTLASS CuTe               │
-│ Don't know → Ask for M,N,K,dtype,arch     │
-└─────────────────────────────────────────────┘
-```
+| Pattern | Template |
+|---------|----------|
+| GEMM + FP16 | wmma_gemm template |
+| GEMM + FP32 | tiled_gemm template |
+| Element-wise | element_wise template |
+| Reduce/Sum | warp_reduce_sum + kernel |
+| Custom op | Use CUTLASS CuTe |
+| Don't know | Ask for M,N,K,dtype,arch |
 
 ---
 
