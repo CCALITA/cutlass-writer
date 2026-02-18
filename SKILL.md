@@ -13,6 +13,11 @@ triggers:
   - "cuda optimization"
 version: 4.0.0
 source: https://github.com/NVIDIA/cutlass
+upstream_version: "v4.4.0"  # CUTLASS latest
+last_updated: "2026-02-18"
+changelog: |
+  - v4.0: Rewritten for AI usability with templates
+  - Added Tensor Core MMA patterns
 author: Skill Factory
 ---
 
